@@ -49,7 +49,7 @@ class FuncTest {
             lnIn = new FileReader("src/test/resources/CsvFiles/Inputs/LnIn.csv");
             logIn = new FileReader("src/test/resources/CsvFiles/Inputs/LogIn.csv");
 
-            // Mock data from CSVs
+
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(cotIn);
             for (CSVRecord record : records)
                 when(cotMock.calculate(Double.parseDouble(record.get(0)))).thenReturn(Double.valueOf(record.get(1)));
@@ -70,9 +70,8 @@ class FuncTest {
             for (CSVRecord record : records)
                 when(lnMock.calculate(Double.parseDouble(record.get(0)))).thenReturn(Double.valueOf(record.get(1)));
 
-
         } catch (IOException ex) {
-            System.err.println("IOException");
+            System.err.println("IOException: " + ex.getMessage());
         }
     }
 
@@ -89,7 +88,6 @@ class FuncTest {
     void cotTestUndefined(double param) {
         Assertions.assertThrows(ArithmeticException.class, () -> CotFunc.calculate(param));
     }
-
 
     @ParameterizedTest
     @ValueSource(doubles = {-10.0, -1.0, 1.0, 10.0})
@@ -119,13 +117,6 @@ class FuncTest {
         Assertions.assertEquals(Math.log(param), ln.calculate(param), eps);
     }
 
-//    @ParameterizedTest
-//    @CsvFileSource(resources = "/CsvFiles/In/FuncSystemIn.csv", numLinesToSkip = 1)
-//    void testFuncSystem(double value, double expected) {
-//        FuncSystem funcSystem = new FuncSystem();
-//        Assertions.assertEquals(expected, funcSystem.calculate(value), eps);
-//    }
-
     @ParameterizedTest
     @CsvFileSource(resources = "/CsvFiles/In/TrigonometricFuncsIn.csv")
     void testTrigonometricFuncs(Double value, Double expectedSin, Double expectedCot, Double expectedSec, Double expectedCsc) {
@@ -152,8 +143,6 @@ class FuncTest {
         }
     }
 
-
-
     @ParameterizedTest
     @CsvFileSource(resources = "/CsvFiles/In/LogBaseFuncIn.csv")
     void testLogBaseFunc(double value, double base, double expected) {
@@ -173,14 +162,14 @@ class FuncTest {
     @AfterAll
     static void tearDown() {
         try {
-            cotIn.close();
-            cscIn.close();
-            secIn.close();
-            sinIn.close();
-            lnIn.close();
-            logIn.close();
+            if (cotIn != null) cotIn.close();
+            if (cscIn != null) cscIn.close();
+            if (secIn != null) secIn.close();
+            if (sinIn != null) sinIn.close();
+            if (lnIn != null) lnIn.close();
+            if (logIn != null) logIn.close();
         } catch (IOException ex) {
-            System.err.println("Error closing file readers");
+            System.err.println("Error closing file readers: " + ex.getMessage());
         }
     }
 }
